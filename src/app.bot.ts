@@ -13,7 +13,7 @@ export class AppBot {
 
         bot.on('message', async (msg) => {
             const chatId = msg.chat.id;
-            const messageText : string = msg.text;
+            const messageText = msg.text;
 
             if(messageText && (messageText.startsWith('Hi') || messageText.startsWith('Hello') || messageText.startsWith('/start'))){
                 bot.sendMessage(chatId, 'Hello, Welcome to Cloudy\nPlease use /weather command to get weather for your state');

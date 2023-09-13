@@ -19,8 +19,7 @@ export class AppService {
     };
 
     try {
-      const fetch = await import('node-fetch');
-      const response = await fetch.default(url, options);
+      const response = await fetch(url, options);
       const result = await response.json();
       console.log(result);
       return result;
@@ -43,9 +42,9 @@ export class AppService {
     };
 
     try {
-      const fetch = await import('node-fetch');
-      const response = await fetch.default(url, options);
+      const response = await fetch(url, options);
       const result = await response.json();
+
       console.log(result);
       return result;
     } catch (error) {
