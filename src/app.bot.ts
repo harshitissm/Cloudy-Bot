@@ -13,12 +13,12 @@ export class AppBot {
 
         bot.on('message', async (msg) => {
             const chatId = msg.chat.id;
-            const messageText = msg.text;
+            const messageText : string = msg.text;
 
-            if(messageText.startsWith('Hi') || messageText.startsWith('Hello') || messageText.startsWith('/start')){
+            if(messageText && (messageText.startsWith('Hi') || messageText.startsWith('Hello') || messageText.startsWith('/start'))){
                 bot.sendMessage(chatId, 'Hello, Welcome to Cloudy\nPlease use /weather command to get weather for your state');
             }
-            else if (messageText.startsWith('/weather')) {
+            else if (messageText && (messageText.startsWith('/weather'))) {
                 // Set the state to 'awaitingCity'
                 this.chatStates[chatId] = 'awaitingCity';
                 bot.sendMessage(chatId, 'Please provide a city for weather information.');
