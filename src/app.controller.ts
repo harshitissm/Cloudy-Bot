@@ -5,13 +5,6 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) { }
 
-  @Get()
-  async getHello() {
-    const weatherData = await this.appService.getWeather();
-    console.log(weatherData);
-    return weatherData;
-  }
-
   @Get(':id')
   async getWeatherByCity(@Param('id') id: string) {
     const weatherData = await this.appService.getWeatherByCity(id);
