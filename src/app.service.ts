@@ -20,7 +20,7 @@ export class AppService {
     };
 
     try {
-      const fetch = (await import('node-fetch')).default;
+      // const fetch = (await import('node-fetch')).default;
       const response = await fetch(url, options);
       const result = await response.json();
 
