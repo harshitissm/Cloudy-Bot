@@ -8,6 +8,7 @@ export class AppController {
   @Get()
   async getHello() {
     const weatherData = await this.appService.getWeather();
+    console.log(weatherData);
     return weatherData;
   }
 

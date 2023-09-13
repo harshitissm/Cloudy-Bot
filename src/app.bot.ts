@@ -30,7 +30,8 @@ export class AppBot {
                 delete this.chatStates[chatId]; // Clear the state
                 try {
                     const response = await this.appService.getWeatherByCity(city);
-                    bot.sendMessage(chatId, `Temperature in ${city}: ${response.temp}°C\nFeels Like: ${response.feels_like}°C`);
+                    const newObj: any = response;
+                    bot.sendMessage(chatId, `Temperature in ${city}: ${newObj.temp}°C\nFeels Like: ${newObj.feels_like}°C`);
                     bot.sendMessage(chatId, 'Use /weather command to get weather for another state');
                 } catch (error) {
                     console.error(error);
