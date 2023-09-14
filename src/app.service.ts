@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import fetch from 'node-fetch';
 
 @Injectable()
 export class AppService {
@@ -21,7 +20,6 @@ export class AppService {
     };
 
     try {
-      // const fetch = (await import('node-fetch')).default;
       const response = await fetch(url, options);
       const result = await response.json();
 
