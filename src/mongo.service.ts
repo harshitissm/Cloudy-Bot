@@ -4,7 +4,7 @@ import { MongoClient } from 'mongodb';
 @Injectable()
 export class MongoDBService {
 
-  private readonly uri = process.env.MONGODB_URI || 'mongodb+srv://mongo:mongo@cluster0.ebwjwaa.mongodb.net/?retryWrites=true&w=majority';
+  private readonly uri = process.env.MONGODB_URI;
   private readonly client: MongoClient;
 
   constructor() {
