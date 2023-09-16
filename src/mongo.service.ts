@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { MongoClient } from 'mongodb';
+import { MongoClient, Collection, Document, WithId } from 'mongodb';
 
 @Injectable()
 export class MongoDBService {
@@ -24,6 +24,12 @@ export class MongoDBService {
     }, { 
       upsert: true 
     });
+  }
+
+  async getAllUsers(): Promise<WithId<Document>[]> {
+    const collection: Collection<WithId<Document>> = this.client.db('Cloudy_Bot').collection('subscriptions');
+    const users  = await collection.find({}).toArray();
+    return users;
   }
 
   async getUserSubscription(userId: string): Promise<string | null> {

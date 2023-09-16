@@ -10,7 +10,7 @@ export class AppBot {
 
     constructor(private readonly appService: AppService, private readonly mongoDbService: MongoDBService) {
         const TelegramBot = require('node-telegram-bot-api');
-        const token = '6605906683:AAEH49Juc57pUYaUiD8r8Hq5hUHnRBx2Txs';
+        const token = process.env.BOT_TOKEN;
         const bot = new TelegramBot(token, { polling: true });
 
         bot.on('message', async (msg) => {
@@ -21,14 +21,14 @@ export class AppBot {
                 delete this.chatStates[chatId];
                 bot.sendMessage(chatId, 'Hello, Welcome to Cloudy\nPlease use /weather command to get weather for your state');
             }
-            else if (messageText && (messageText.startsWith('/delete'))){
+            else if (messageText && (messageText.startsWith('/delete'))) {
 
                 const city = await this.mongoDbService.getUserSubscription(chatId);
-                if(city){
+                if (city) {
                     await this.mongoDbService.deleteUserSubscription(chatId);
                     bot.sendMessage(chatId, `Your Subscription for weather updates for city: ${city} is now deleted`);
                 }
-                else{
+                else {
                     bot.sendMessage(chatId, 'You have not subscribed for weather updates. Please use /subscribe to get weather updates for your city');
                 }
             }
@@ -37,17 +37,17 @@ export class AppBot {
                 this.chatStates[chatId] = 'awaitingCity';
                 bot.sendMessage(chatId, 'Please provide a city for weather information.');
 
-            }else if (messageText && (messageText.startsWith('/subscribe'))) {
+            } else if (messageText && (messageText.startsWith('/subscribe'))) {
                 // Set the state to 'awaitingSubscription'
                 this.chatStates[chatId] = 'awaitingSubscription';
                 const city = await this.mongoDbService.getUserSubscription(chatId);
-                if(city){
+                if (city) {
                     // const city = this.subscriptions[chatId];
                     bot.sendMessage(chatId, `You have already subscribed to city ${city} for weather updates. Entering new city will update your subscribed city`);
                     setTimeout(() => {
                         bot.sendMessage(chatId, 'If you wish to continue, then please enter the new city else /start again');
                     }, 1000);
-                }else{
+                } else {
                     bot.sendMessage(chatId, 'Please enter the city you want to subscribe to (e.g., New York).');
                 }
             } else if (this.chatStates[chatId] === 'awaitingCity') {
@@ -59,7 +59,7 @@ export class AppBot {
                     const newObj: any = response;
                     bot.sendMessage(chatId, `Temperature in ${city}: ${newObj.temp}°C\nFeels Like: ${newObj.feels_like}°C`);
                     setTimeout(() => {
-                        bot.sendMessage(chatId, 'Use /weather command to get weather for another state');                        
+                        bot.sendMessage(chatId, 'Use /weather command to get weather for another state');
                     }, 1000);
                 } catch (error) {
                     console.error(error);
@@ -77,18 +77,29 @@ export class AppBot {
         });
 
         const schedule = require('node-schedule');
-        schedule.scheduleJob('7 9 * * *', async () => {
-            for (const userId in this.subscriptions) {
-                // const city = this.subscriptions[userId];
-                const city = await this.mongoDbService.getUserSubscription(userId);
+        schedule.scheduleJob('30 9 * * *', async () => {
+            const users = await this.mongoDbService.getAllUsers();
+
+            users.forEach(async (user) => {
                 try {
-                    const weatherData = await this.appService.getWeatherByCity(city);
-                    bot.sendMessage(userId, `Weather update for ${city}:\nTemp is: ${weatherData.temp}`);
+                    const weatherData = await this.appService.getWeatherByCity(user.state);
+                    bot.sendMessage(user.userId, `Weather update for ${user.state}:\nTemp is: ${weatherData.temp}`);
                 } catch (error) {
                     console.error(error);
-                    bot.sendMessage(userId, `Error fetching weather update for ${city}.`);
+                    bot.sendMessage(user.userId, `Error fetching weather update for ${user.state}.`);
                 }
-            }
+            });
+
+            // for (const userId in this.subscriptions) {
+            //     const city = this.subscriptions[userId];
+            //     try {
+            //         const weatherData = await this.appService.getWeatherByCity(city);
+            //         bot.sendMessage(userId, `Weather update for ${city}:\nTemp is: ${weatherData.temp}`);
+            //     } catch (error) {
+            //         console.error(error);
+            //         bot.sendMessage(userId, `Error fetching weather update for ${city}.`);
+            //     }
+            // }
         });
     }
 }
